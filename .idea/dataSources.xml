@@ -10,5 +10,11 @@
         <property name="serverTimezone" value="UTC" />
       </driver-properties>
     </data-source>
+    <data-source source="LOCAL" name="taskmanager@localhost" uuid="837214bf-ae7f-4f83-bbbc-3dab9e7c00a1">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://localhost:3306/taskmanager?serverTimezone=UTC</jdbc-url>
+    </data-source>
   </component>
 </project>
