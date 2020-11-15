@@ -16,8 +16,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtTokenProvider jwtTokenProvider;
 
     private static final String ADMIN_ENDPOINT = "/api/admin/**";
-    private static final String LOGIN_ENDPOINT = "/api/auth/login";
-    private static final String REGISTER_ENDPOINT = "/api/auth/register";
+    private static final String AUTH_ENDPOINT = "/api/auth/**";
+    private static final String TEST_ENDPOINT = "/api/test/**";
+
 
     @Autowired
     public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
@@ -33,15 +34,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .cors().and()
                 .httpBasic().disable()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(LOGIN_ENDPOINT).permitAll()
-                .antMatchers(REGISTER_ENDPOINT).permitAll()
-                .antMatchers(ADMIN_ENDPOINT).hasRole("ADMIN")
-                .anyRequest().authenticated()
+                //.antMatchers(AUTH_ENDPOINT).permitAll()
+                //.antMatchers(TEST_ENDPOINT).permitAll()
+                .antMatchers("/api/test/all").permitAll()
+                .antMatchers("/api/test/user").authenticated()
+                .antMatchers("/api/test/admin").hasRole("ADMIN")
+                //.antMatchers(ADMIN_ENDPOINT).hasRole("ADMIN")
+                .anyRequest().permitAll()
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));
     }
