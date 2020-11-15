@@ -15,4 +15,8 @@ public interface UserService {
     User findById(Long id);
 
     void delete(Long id);
+
+    boolean isUniqUsername(String username);
+
+    boolean isUniqEmail(String email);
 }

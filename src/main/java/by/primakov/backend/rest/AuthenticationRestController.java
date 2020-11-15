@@ -1,6 +1,7 @@
 package by.primakov.backend.rest;
 
 import by.primakov.backend.dto.request.LoginRequest;
+import by.primakov.backend.dto.request.SignupRequest;
 import by.primakov.backend.dto.response.JwtResponse;
 import by.primakov.backend.dto.response.MessageResponse;
 import by.primakov.backend.model.User;
@@ -12,15 +13,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -58,5 +56,27 @@ public class AuthenticationRestController {
 
         log.info("IN login - user with username: {} successfully logged in", username);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity register(@RequestBody SignupRequest signupRequest) {
+        if (!userService.isUniqUsername(signupRequest.getUsername())) {
+            return ResponseEntity.badRequest().body(new MessageResponse("ERROR: Username is already taken!"));
+        }
+        if (!userService.isUniqEmail(signupRequest.getEmail())) {
+            return ResponseEntity.badRequest().body(new MessageResponse("ERROR: Email is already taken!"));
+        }
+
+        User newUser = new User();
+        newUser.setUsername(signupRequest.getUsername());
+        newUser.setEmail(signupRequest.getEmail());
+        newUser.setFirstName(signupRequest.getFirstName());
+        newUser.setLastName(signupRequest.getLastName());
+        newUser.setPassword(signupRequest.getPassword());
+
+        userService.register(newUser);
+
+        log.info("IN register - user with username: {} successfully registered", newUser.getUsername());
+        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 }

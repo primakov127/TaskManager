@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -38,10 +40,13 @@ public class UserServiceImpl implements UserService {
         Role roleUser = roleRepository.findByName("ROLE_USER");
         List<Role> userRoles = new ArrayList<>();
         userRoles.add(roleUser);
+        Timestamp createdDate = new Timestamp(new Date().getTime());
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(userRoles);
         user.setStatus(Status.ACTIVE);
+        user.setCreated(createdDate);
+        user.setUpdated(createdDate);
 
         User registeredUser = userRepository.save(user);
 
@@ -84,5 +89,17 @@ public class UserServiceImpl implements UserService {
     public void delete(Long id) {
         userRepository.deleteById(id);
         log.info("IN delete - user with id: {} successfully deleted", id);
+    }
+
+    @Override
+    public boolean isUniqUsername(String username) {
+        boolean result = !userRepository.existsByUsername(username);
+        return result;
+    }
+
+    @Override
+    public boolean isUniqEmail(String email) {
+        boolean result = !userRepository.existsByEmail(email);
+        return result;
     }
 }
