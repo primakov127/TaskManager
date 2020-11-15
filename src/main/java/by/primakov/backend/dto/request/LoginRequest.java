@@ -1,9 +1,9 @@
-package by.primakov.backend.dto;
+package by.primakov.backend.dto.request;
 
 import lombok.Data;
 
 @Data
-public class AuthenticationRequestDto {
+public class LoginRequest {
     private String username;
     private String password;
 }

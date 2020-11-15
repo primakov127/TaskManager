@@ -1,13 +1,15 @@
 package by.primakov.backend.rest;
 
-import by.primakov.backend.dto.AuthenticationRequestDto;
+import by.primakov.backend.dto.request.LoginRequest;
+import by.primakov.backend.dto.response.JwtResponse;
+import by.primakov.backend.dto.response.MessageResponse;
 import by.primakov.backend.model.User;
 import by.primakov.backend.security.jwt.JwtTokenProvider;
 import by.primakov.backend.service.UserService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,8 +19,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+@Log4j2
 @RestController
 @RequestMapping(value = "/api/auth/")
 public class AuthenticationRestController {
@@ -36,26 +41,22 @@ public class AuthenticationRestController {
         this.userService = userService;
     }
 
-    @PostMapping("login")
-    public ResponseEntity login(@RequestBody AuthenticationRequestDto requestDto) {
+    @PostMapping("/login")
+    public ResponseEntity login(@RequestBody LoginRequest loginRequest) {
+        String username = loginRequest.getUsername();
         try {
-            String username = requestDto.getUsername();
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, requestDto.getPassword()));
-            User user = userService.findByUsername(username);
-
-            if (user == null) {
-                throw new UsernameNotFoundException("User with username: " + username + " not found");
-            }
-
-            String token = jwtTokenProvider.createToken(username, user.getRoles());
-
-            Map<Object, Object> response = new HashMap<>();
-            response.put("username", username);
-            response.put("token", token);
-
-            return ResponseEntity.ok(response);
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, loginRequest.getPassword()));
         } catch (AuthenticationException e) {
-            throw new BadCredentialsException("Invalid user name or password");
+            return ResponseEntity.badRequest().body(new MessageResponse("ERROR: Invalid username or password!"));
         }
+
+        User user = userService.findByUsername(username);
+        String token = jwtTokenProvider.createToken(username, user.getRoles());
+
+        List<String> roleNames = user.getRoles().stream().map(r -> r.getName()).collect(Collectors.toList());
+        JwtResponse response = new JwtResponse(token, user.getUsername(), user.getEmail(), roleNames);
+
+        log.info("IN login - user with username: {} successfully logged in", username);
+        return ResponseEntity.ok(response);
     }
 }
