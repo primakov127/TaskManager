@@ -30,9 +30,17 @@ public class TaskRestController {
     }
 
     @PostMapping(value = "/add")
-    public ResponseEntity addTask(@RequestBody TaskDTO taskRequest) {
+    public TaskDTO addTask(@RequestBody TaskDTO taskRequest) {
 
-        taskRepository.save(new Task(taskRequest.getText()));
-        return ResponseEntity.ok(new MessageResponse("Task added successfully!"));
+        Task addedTask = taskRepository.save(new Task(taskRequest.getText()));
+//        return ResponseEntity.ok(new MessageResponse("Task added successfully!"));
+        return new TaskDTO(addedTask.getId(), addedTask.getText(), addedTask.isCompleted());
+    }
+
+    @DeleteMapping(value = "/delete")
+    public ResponseEntity deleteTask(@RequestParam("id") long id) {
+
+        taskRepository.deleteById(id);
+        return ResponseEntity.ok(new MessageResponse("Task deleted successfully!"));
     }
 }
