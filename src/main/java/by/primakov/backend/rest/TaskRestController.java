@@ -26,7 +26,7 @@ public class TaskRestController {
     @GetMapping(value = "/all")
     public List<TaskDTO> getTasks() {
         return taskRepository.findAll().stream()
-                .map(e -> new TaskDTO(e.getId(), e.getText(), e.isCompleted())).collect(Collectors.toList());
+                .map(e -> new TaskDTO(e.getId(), e.getText())).collect(Collectors.toList());
     }
 
     @PostMapping(value = "/add")
@@ -34,7 +34,7 @@ public class TaskRestController {
 
         Task addedTask = taskRepository.save(new Task(taskRequest.getText()));
 //        return ResponseEntity.ok(new MessageResponse("Task added successfully!"));
-        return new TaskDTO(addedTask.getId(), addedTask.getText(), addedTask.isCompleted());
+        return new TaskDTO(addedTask.getId(), addedTask.getText());
     }
 
     @DeleteMapping(value = "/delete")
