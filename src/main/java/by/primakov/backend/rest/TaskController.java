@@ -32,28 +32,30 @@ public class TaskController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/add")
     public TaskDTO AddTask(@RequestBody TaskDTO newTask) {
-        Task result = taskRepository.save(new Task(newTask.getText()));
-        return new TaskDTO(result.getId(), result.getText());
+        Task task = taskRepository.save(new Task(newTask.getText()));
+        TaskDTO result = new TaskDTO(task.getId(), task.getText());
+
+        return result;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(value = "/update")
     public TaskDTO UpdateTask(@RequestBody TaskDTO updatedTask) {
-        Task result = taskRepository.findById(updatedTask.getId()).get();
-        if (result != null) {
-            result.setText(updatedTask.getText());
-            taskRepository.save(result);
-        }
-        return new TaskDTO(result.getId(), result.getText());
+        Task task = taskRepository.findById(updatedTask.getId()).get();
+        task.setText(updatedTask.getText());
+        taskRepository.save(task);
+        TaskDTO result = new TaskDTO(task.getId(), task.getText());
+
+        return result;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(value = "/delete")
     public TaskDTO DeleteTask(@RequestParam long id) {
-        Task result = taskRepository.findById(id).get();
-        if (result != null) {
-            taskRepository.delete(result);
-        }
-        return new TaskDTO(result.getId(), result.getText());
+        Task task = taskRepository.findById(id).get();
+        taskRepository.delete(task);
+        TaskDTO result = new TaskDTO(task.getId(), task.getText());
+
+        return result;
     }
 }
