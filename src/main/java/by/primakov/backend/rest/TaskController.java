@@ -29,6 +29,14 @@ public class TaskController {
                 .map(task -> new TaskDTO(task.getId(), task.getText())).collect(Collectors.toList());
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping(value = "/search")
+    public List<TaskDTO> GetTasksByText(@RequestParam String text) {
+        return taskRepository.findAll().stream()
+                .filter(task -> task.getText().contains(text))
+                .map(task -> new TaskDTO(task.getId(), task.getText())).collect(Collectors.toList());
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/add")
     public TaskDTO AddTask(@RequestBody TaskDTO newTask) {
