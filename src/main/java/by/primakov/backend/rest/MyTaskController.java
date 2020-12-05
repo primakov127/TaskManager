@@ -3,6 +3,7 @@ package by.primakov.backend.rest;
 import by.primakov.backend.dto.MyTaskDTO;
 import by.primakov.backend.model.Task;
 import by.primakov.backend.model.User;
+import by.primakov.backend.model.UserTask;
 import by.primakov.backend.repository.TaskRepository;
 import by.primakov.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +66,21 @@ public class MyTaskController {
         MyTaskDTO result = new MyTaskDTO(task.getId(), task.getText(), task.isCompleted());
 
         return result;
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping(value = "/updateUserTask")
+    public MyTaskDTO UpdateUserTask(@RequestParam long userId, @RequestParam long taskId, @RequestParam boolean completed) {
+        User user = userRepository.getOne(userId);
+        for (var task : user.getUserTasks()) {
+            if (task.getTask().getId().equals(taskId)) {
+                task.setCompleted(completed);
+                userRepository.save(user);
+                return new MyTaskDTO(task.getTask().getId(), task.getTask().getText(), task.getTask().isCompleted());
+            }
+        }
+
+        return null;
     }
 
     @PreAuthorize("isAuthenticated()")
