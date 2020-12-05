@@ -32,8 +32,9 @@ public class MyTaskController {
     public List<MyTaskDTO> GetMyTasks() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentUser = userRepository.findByUsername(username);
-        List<MyTaskDTO> result = currentUser.getTasks().stream()
-                .map(task -> new MyTaskDTO(task.getId(), task.getText(), task.isCompleted())).collect(Collectors.toList());
+        List<MyTaskDTO> result = currentUser.getUserTasks().stream()
+                .map(userTask -> new MyTaskDTO(userTask.getTask().getId(), userTask.getTask().getText(), userTask.isCompleted()))
+                .collect(Collectors.toList());
 
         return result;
     }
@@ -43,8 +44,9 @@ public class MyTaskController {
     public List<MyTaskDTO> GetUserTasks(@RequestParam long userId) {
         User user = userRepository.getOne(userId);
         List<MyTaskDTO> result = null;
-        result = user.getTasks().stream()
-                .map(task -> new MyTaskDTO(task.getId(), task.getText(), task.isCompleted())).collect(Collectors.toList());
+        result = user.getUserTasks().stream()
+                .map(userTask -> new MyTaskDTO(userTask.getTask().getId(), userTask.getTask().getText(), userTask.isCompleted()))
+                .collect(Collectors.toList());
 
         return result;
     }

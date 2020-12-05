@@ -183,4 +183,12 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="1.0.11" author="maxim.primakov">
+        <addColumn tableName="user_tasks">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

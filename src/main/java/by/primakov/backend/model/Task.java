@@ -21,12 +21,19 @@ public class Task extends BaseEntity {
         this.completed = false;
     }
 
+    public Task(String text, Boolean completed) {
+        super(new Date(), new Date(), Status.ACTIVE);
+        this.text = text;
+        this.completed = completed;
+    }
+
     @Column(name = "text")
     private String text;
 
     @Column(name = "completed")
     private boolean completed;
 
-    @ManyToMany(mappedBy = "tasks", fetch = FetchType.LAZY)
-    private List<User> users;
+//    @ManyToMany(mappedBy = "tasks", fetch = FetchType.LAZY)
+//    private List<User> users;
+
 }

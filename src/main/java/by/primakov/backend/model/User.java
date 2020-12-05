@@ -36,4 +36,7 @@ public class User extends BaseEntity {
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "task_id", referencedColumnName = "id")})
     private List<Task> tasks;
+
+    @OneToMany(mappedBy = "user")
+    private  List<UserTask> userTasks;
 }
