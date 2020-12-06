@@ -76,7 +76,7 @@ public class MyTaskController {
             if (task.getTask().getId().equals(taskId)) {
                 task.setCompleted(completed);
                 userRepository.save(user);
-                return new MyTaskDTO(task.getTask().getId(), task.getTask().getText(), task.getTask().isCompleted());
+                return new MyTaskDTO(task.getTask().getId(), task.getTask().getText(), task.isCompleted());
             }
         }
 
