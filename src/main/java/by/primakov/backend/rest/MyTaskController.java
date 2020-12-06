@@ -6,6 +6,7 @@ import by.primakov.backend.model.User;
 import by.primakov.backend.model.UserTask;
 import by.primakov.backend.repository.TaskRepository;
 import by.primakov.backend.repository.UserRepository;
+import by.primakov.backend.repository.UserTaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,11 +22,13 @@ public class MyTaskController {
 
     private final UserRepository userRepository;
     private final TaskRepository taskRepository;
+    private final UserTaskRepository userTaskRepository;
 
     @Autowired
-    public MyTaskController(UserRepository userRepository, TaskRepository taskRepository) {
+    public MyTaskController(UserRepository userRepository, TaskRepository taskRepository, UserTaskRepository userTaskRepository) {
         this.userRepository = userRepository;
         this.taskRepository = taskRepository;
+        this.userTaskRepository = userTaskRepository;
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -60,10 +63,10 @@ public class MyTaskController {
         Task task = taskRepository.getOne(newTask.getId());
         // Check if user has already had this task
         if (currentUser.getTasks().stream().noneMatch(tsk -> (tsk.getId().equals(task.getId())))) {
-            currentUser.getTasks().add(task);
-            userRepository.save(currentUser);
+            userTaskRepository.save(new UserTask(currentUser, task, false));
         }
-        MyTaskDTO result = new MyTaskDTO(task.getId(), task.getText(), task.isCompleted());
+//        MyTaskDTO result = new MyTaskDTO(task.getId(), task.getText(), task.isCompleted());
+        MyTaskDTO result = new MyTaskDTO(task.getId(), task.getText(), false);
 
         return result;
     }
@@ -94,7 +97,8 @@ public class MyTaskController {
             currentUser.getTasks().remove(task);
             userRepository.save(currentUser);
         }
-        MyTaskDTO result = new MyTaskDTO(task.getId(), task.getText(), task.isCompleted());
+//        MyTaskDTO result = new MyTaskDTO(task.getId(), task.getText(), task.isCompleted());
+        MyTaskDTO result = new MyTaskDTO(task.getId(), task.getText(), false);
 
         return result;
     }

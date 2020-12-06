@@ -10,9 +10,19 @@ import javax.persistence.*;
 @Data
 public class UserTask {
 
+    public UserTask() {
+
+    }
+
+    public UserTask(User user, Task task, boolean completed) {
+        this.user = user;
+        this.task = task;
+        this.completed = completed;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

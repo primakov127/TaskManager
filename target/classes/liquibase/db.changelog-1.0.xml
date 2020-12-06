@@ -191,4 +191,8 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="1.0.12" author="maxim.primakov">
+        <dropColumn tableName="tasks" columnName="completed"/>
+    </changeSet>
+
 </databaseChangeLog>
