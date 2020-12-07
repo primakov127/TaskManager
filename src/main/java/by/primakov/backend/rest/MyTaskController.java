@@ -45,14 +45,19 @@ public class MyTaskController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(value = "/allUser")
-    public List<MyTaskDTO> GetUserTasks(@RequestParam long userId) {
-        User user = userRepository.getOne(userId);
-        List<MyTaskDTO> result = null;
-        result = user.getUserTasks().stream()
-                .map(userTask -> new MyTaskDTO(userTask.getTask().getId(), userTask.getTask().getText(), userTask.isCompleted()))
-                .collect(Collectors.toList());
+    public List<MyTaskDTO> GetUserTasks(@RequestParam long userId) throws Exception {
+        try {
+            User user = userRepository.getOne(userId);
+            List<MyTaskDTO> result = null;
+            result = user.getUserTasks().stream()
+                    .map(userTask -> new MyTaskDTO(userTask.getTask().getId(), userTask.getTask().getText(), userTask.isCompleted()))
+                    .collect(Collectors.toList());
 
-        return result;
+            return result;
+        } catch (Exception e) {
+            throw new Exception("No user found with id: " + userId);
+        }
+
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -67,7 +72,6 @@ public class MyTaskController {
         }
 //        MyTaskDTO result = new MyTaskDTO(task.getId(), task.getText(), task.isCompleted());
         MyTaskDTO result = new MyTaskDTO(task.getId(), task.getText(), false);
-
         return result;
     }
 
@@ -76,6 +80,7 @@ public class MyTaskController {
     public MyTaskDTO UpdateUserTask(@RequestParam long userId, @RequestParam long taskId, @RequestParam boolean completed) {
         User user = userRepository.getOne(userId);
         for (var task : user.getUserTasks()) {
+            // Change delete from UserTaskRepository
             if (task.getTask().getId().equals(taskId)) {
                 task.setCompleted(completed);
                 userRepository.save(user);
@@ -93,11 +98,12 @@ public class MyTaskController {
         User currentUser = userRepository.findByUsername(username);
         Task task = taskRepository.getOne(taskId);
         // Check if user has deleted task
-        if (currentUser.getTasks().stream().anyMatch(tsk -> (tsk.getId().equals(task.getId())))) {
-            currentUser.getTasks().remove(task);
-            userRepository.save(currentUser);
+        for (var userTask : currentUser.getUserTasks()) {
+            if (userTask.getUser().getId().equals(currentUser.getId()) && userTask.getTask().getId().equals(task.getId())) {
+                userTaskRepository.delete(userTask);
+            }
         }
-//        MyTaskDTO result = new MyTaskDTO(task.getId(), task.getText(), task.isCompleted());
+
         MyTaskDTO result = new MyTaskDTO(task.getId(), task.getText(), false);
 
         return result;

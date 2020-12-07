@@ -15,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,7 +39,7 @@ public class AuthenticationRestController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity login(@Valid @RequestBody LoginRequest loginRequest) {
         String username = loginRequest.getUsername();
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, loginRequest.getPassword()));
@@ -57,7 +58,7 @@ public class AuthenticationRestController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody SignupRequest signupRequest) {
+    public ResponseEntity register(@Valid @RequestBody SignupRequest signupRequest) {
         if (!userService.isUniqUsername(signupRequest.getUsername())) {
             return ResponseEntity.badRequest().body(new MessageResponse("ERROR: Username is already taken!"));
         }

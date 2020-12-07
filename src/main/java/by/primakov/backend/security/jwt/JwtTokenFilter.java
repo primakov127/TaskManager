@@ -11,7 +11,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.Console;
 import java.io.IOException;
 
 @Log4j2
@@ -38,8 +37,8 @@ public class JwtTokenFilter extends GenericFilterBean {
 
             filterChain.doFilter(servletRequest, servletResponse);
         } catch (JwtAuthenticationException e) {
-            logger.error("Cannot set user authentication: {}", e);
-            ((HttpServletResponse)servletResponse).sendError(403, e.getMessage());
+            logger.info("Cannot set user authentication: {}");
+            ((HttpServletResponse) servletResponse).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
 }
