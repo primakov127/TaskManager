@@ -10,6 +10,14 @@ import java.util.List;
 @Data
 public class Role extends BaseEntity {
 
+    public Role() {
+
+    }
+
+    public Role(String name) {
+        this.name = name;
+    }
+
     @Column(name = "name")
     private String name;
 

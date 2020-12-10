@@ -15,6 +15,11 @@ public class Task extends BaseEntity {
         super();
     }
 
+    public Task(Long id, String text) {
+        setId(id);
+        this.text = text;
+    }
+
     public Task(String text) {
         super(new Date(), new Date(), Status.ACTIVE);
         this.text = text;

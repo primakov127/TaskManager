@@ -10,6 +10,15 @@ import java.util.List;
 @Data
 public class User extends BaseEntity {
 
+    public User() {
+        super();
+    }
+
+    public User(Long id, String username) {
+        setId(id);
+        this.username = username;
+    }
+
     @Column(name = "username")
     private String username;
 
